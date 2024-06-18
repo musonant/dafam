@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     color: primaryBlue,
     borderColor: primaryBlue,
-    borderWidth: 1,
+    borderWidth: StyleSheet.hairlineWidth,
     fontFamily: fonts.primaryMedium,
   },
   label: {},

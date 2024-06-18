@@ -7,6 +7,7 @@ import {
 } from "react-native";
 import { Text } from "./Themed";
 import { primaryBlue, primaryColor } from "@/constants/Colors";
+import { fonts } from "@/constants/typography";
 
 type Props = TouchableOpacityProps & {
   color?: "blue" | "primary" | "blueOutline";
@@ -71,6 +72,6 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 16,
-    fontWeight: "600",
+    fontFamily: fonts.primaryMedium,
   },
 });

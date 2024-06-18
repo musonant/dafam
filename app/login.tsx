@@ -5,7 +5,7 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { router } from "expo-router";
+import { Link, router } from "expo-router";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useEffect, useState } from "react";
@@ -101,11 +101,17 @@ export default function Login() {
         <SafeAreaView style={styles.buttonContainer}>
           <Button
             loading={isLoading}
-            color="blue"
             title="Login"
             onPress={() => handleSubmit()}
           />
         </SafeAreaView>
+
+        <Link href="/signup">
+          <Text style={[styles.subTitle, styles.moreInfo]}>
+            Don't have an account?{" "}
+            <Text style={styles.highlightedText}>Sign up</Text>
+          </Text>
+        </Link>
       </View>
     </ScrollView>
   );
@@ -129,6 +135,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 22,
     marginBottom: 40,
+  },
+  moreInfo: {
+    textAlign: "center",
+  },
+  highlightedText: {
+    fontFamily: fonts.primaryMedium,
   },
   buttonContainer: {
     paddingVertical: 20,

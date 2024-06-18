@@ -3,9 +3,10 @@ import {
   ScrollView,
   StatusBar,
   StyleSheet,
+  TouchableOpacity,
   View,
 } from "react-native";
-import { router } from "expo-router";
+import { Link, router } from "expo-router";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
@@ -112,13 +113,15 @@ export default function Login() {
         </View>
 
         <SafeAreaView style={styles.buttonContainer}>
-          <Button
-            loading={isLoading}
-            color="blue"
-            title="Signup"
-            onPress={handleSubmit}
-          />
+          <Button loading={isLoading} title="Signup" onPress={handleSubmit} />
         </SafeAreaView>
+
+        <Link href="/login">
+          <Text style={[styles.subTitle, styles.moreInfo]}>
+            Already have an account?{" "}
+            <Text style={styles.highlightedText}>Login</Text>
+          </Text>
+        </Link>
       </View>
     </ScrollView>
   );
@@ -143,6 +146,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 22,
     marginBottom: 40,
+  },
+  moreInfo: {
+    textAlign: "center",
+  },
+  highlightedText: {
+    fontFamily: fonts.primaryMedium,
   },
   buttonContainer: {
     paddingVertical: 20,

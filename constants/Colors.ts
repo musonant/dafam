@@ -1,7 +1,7 @@
 export const primaryColor = "#1ABC9C";
 export const primaryBlue = "#2C3E50";
 const tintColorDark = "#fff";
-const tintColorLight = primaryColor;
+export const tintColorLight = "#ECF0F1";
 export const errorColor = "#E74C3C";
 
 export default {

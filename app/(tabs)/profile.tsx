@@ -1,12 +1,15 @@
 import { StyleSheet } from "react-native";
-import { Text, View } from "@/components/Themed";
+import { View } from "@/components/Themed";
 import Button from "@/components/Button";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
+import { useDispatch } from "react-redux";
+import { endSession } from "@/store/authSlice";
 
-export default function TabOneScreen() {
+export default function Profile() {
+  const dispatch = useDispatch();
+
   function logOut() {
-    AsyncStorage.removeItem("userData");
+    dispatch(endSession());
     router.replace("/login");
   }
 
