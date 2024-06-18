@@ -2,9 +2,22 @@ import { Image, SafeAreaView, StatusBar, StyleSheet, View } from "react-native";
 import logo from "@/assets/images/icon.png";
 import Button from "@/components/Button";
 import spacing from "@/constants/spacing";
-import { router } from "expo-router";
+import { router, useRootNavigationState } from "expo-router";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
 export default function Auth() {
+  const user = useSelector((state: RootState) => state.auth.user);
+  const rootNavigationState = useRootNavigationState();
+  const navigatorReady = rootNavigationState?.key != null;
+
+  useEffect(() => {
+    if (user && navigatorReady) {
+      router.replace("/home");
+    }
+  }, [user, navigatorReady]);
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />

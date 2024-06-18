@@ -16,22 +16,23 @@ import TextInput from "@/components/TextInput";
 import { yupSchemas } from "@/utils/validation";
 import { getInputPropsFromFormik } from "@/utils/common";
 import { createUser } from "@/firebaseConfig";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fonts } from "@/constants/typography";
+import { errorColor } from "@/constants/Colors";
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+
   const signinSchema = Yup.object().shape({
     email: yupSchemas.email,
     password: yupSchemas.password,
-    // firstName: yupSchemas.name,
-    // lastName: yupSchemas.name,
+    displayName: yupSchemas.name,
   });
 
   const initialValues = {
-    firstName: "",
-    lastName: "",
+    displayName: "",
     email: "",
     password: "",
   };
@@ -42,7 +43,19 @@ export default function Login() {
       const result = await createUser(values);
       await AsyncStorage.setItem("userData", JSON.stringify(result));
       router.replace("/(tabs)/home");
-    } catch (err) {}
+    } catch (err) {
+      setIsLoading(false);
+      console.log("err", err);
+      if (err?.code === "auth/invalid-credential") {
+        setError("Invalid credentials");
+        return;
+      }
+      if (err?.code === "auth/email-already-in-use") {
+        setError("This email already has an account. Please login instead");
+        return;
+      }
+      setError("Unable to sign up. Please try again");
+    }
     setIsLoading(false);
   }
 
@@ -52,8 +65,12 @@ export default function Login() {
     onSubmit: ({ email, password }) => performSignup({ email, password }),
   });
 
-  const { handleSubmit, errors, touched } = formik;
+  const { handleSubmit, errors, touched, values } = formik;
   const inputProps = getInputPropsFromFormik(formik);
+
+  useEffect(() => {
+    setError("");
+  }, [values.email, values.password]);
 
   return (
     <ScrollView
@@ -68,25 +85,22 @@ export default function Login() {
         <Text style={styles.subTitle}>
           Please enter the details below to get started
         </Text>
+        {error ? <Text style={styles.errorMessage}>{error}</Text> : null}
 
         <View>
-          {/* <TextInput
-            placeholder="First name"
-            containerStyle={styles.input}
-            {...inputProps.firstName}
-            error={touched.firstName ? errors.firstName : ""}
-          />
           <TextInput
-            placeholder="Last name"
+            placeholder="Username"
             containerStyle={styles.input}
-            {...inputProps.lastName}
-            error={touched.lastName ? errors.lastName : ""}
-          /> */}
+            {...inputProps.displayName}
+            error={touched.displayName ? errors.displayName : ""}
+          />
           <TextInput
             placeholder="Email"
             containerStyle={styles.input}
             {...inputProps.email}
             error={touched.email ? errors.email : ""}
+            autoCapitalize="none"
+            keyboardType="email-address"
           />
           <TextInput
             placeholder="Password"
@@ -94,7 +108,6 @@ export default function Login() {
             containerStyle={styles.input}
             {...inputProps.password}
             error={touched.password ? errors.password : ""}
-            secureTextEntry
           />
         </View>
 
@@ -136,5 +149,11 @@ const styles = StyleSheet.create({
   },
   input: {
     marginBottom: 4,
+  },
+  errorMessage: {
+    color: errorColor,
+    fontSize: 16,
+    lineHeight: 22,
+    marginBottom: 10,
   },
 });

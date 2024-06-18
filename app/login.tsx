@@ -8,8 +8,7 @@ import {
 import { router } from "expo-router";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect, useState } from "react";
 
 import spacing from "@/constants/spacing";
 import Button from "@/components/Button";
@@ -19,9 +18,14 @@ import { yupSchemas } from "@/utils/validation";
 import { getInputPropsFromFormik } from "@/utils/common";
 import { login } from "@/firebaseConfig";
 import { fonts } from "@/constants/typography";
+import { errorColor } from "@/constants/Colors";
+import { useDispatch } from "react-redux";
+import { createSession } from "@/store/authSlice";
 
 export default function Login() {
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const loginSchema = Yup.object().shape({
     email: yupSchemas.email,
     password: yupSchemas.password,
@@ -36,9 +40,15 @@ export default function Login() {
     setIsLoading(true);
     try {
       const result = await login(values);
-      await AsyncStorage.setItem("userData", JSON.stringify(result));
+      dispatch(createSession(result));
       router.replace("/(tabs)/home");
-    } catch (err) {}
+    } catch (err) {
+      if (err?.code === "auth/invalid-credential") {
+        setError("Invalid credentials");
+        return;
+      }
+      setError("Unable to login. Please try again");
+    }
     setIsLoading(false);
   }
 
@@ -48,8 +58,12 @@ export default function Login() {
     onSubmit: ({ email, password }) => performLogin({ email, password }),
   });
 
-  const { handleSubmit, errors, touched } = formik;
+  const { handleSubmit, errors, touched, values } = formik;
   const inputProps = getInputPropsFromFormik(formik);
+
+  useEffect(() => {
+    setError("");
+  }, [values.email, values.password]);
 
   return (
     <ScrollView
@@ -64,6 +78,7 @@ export default function Login() {
         <Text style={styles.subTitle}>
           Please enter your credentials below to login
         </Text>
+        {error ? <Text style={styles.errorMessage}>{error}</Text> : null}
 
         <View>
           <TextInput
@@ -120,5 +135,11 @@ const styles = StyleSheet.create({
   },
   input: {
     marginBottom: 4,
+  },
+  errorMessage: {
+    color: errorColor,
+    fontSize: 16,
+    lineHeight: 22,
+    marginBottom: 10,
   },
 });
