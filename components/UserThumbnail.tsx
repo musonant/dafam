@@ -3,8 +3,19 @@ import { StyleSheet } from "react-native";
 import { fonts } from "@/constants/typography";
 import { Text, View } from "./Themed";
 
-export default function UserThumbnail({ userData }) {
-  const { name, userIcon } = userData || {};
+type UserDataType = {
+  name: string;
+  userIcon?: string;
+};
+export default function UserThumbnail({
+  userData,
+}: {
+  userData: UserDataType;
+}) {
+  const {
+    name,
+    userIcon = "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png",
+  } = userData || {};
 
   return (
     <View>

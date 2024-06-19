@@ -12,3 +12,8 @@ export const getInputPropsFromFormik = (formik) => {
   });
   return props;
 };
+
+export const reverseObject = (obj: object) => {
+  const reversedEntries = Object.entries(obj).reverse();
+  return Object.fromEntries(reversedEntries);
+};

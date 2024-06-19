@@ -6,13 +6,18 @@ import { router } from "expo-router";
 export default function PostTrigger() {
   return (
     <View style={styles.container}>
-      <Image source={{ uri: "" }} style={styles.userIcon} />
+      <Image
+        source={{
+          uri: "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png",
+        }}
+        style={styles.userIcon}
+      />
       <TouchableOpacity
         style={styles.inputButton}
         onPress={() => router.navigate("/home/create-post")}
         activeOpacity={1}
       >
-        <Text>What's on your mind?</Text>
+        <Text>Express yourself</Text>
       </TouchableOpacity>
     </View>
   );

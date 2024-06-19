@@ -9,6 +9,7 @@ import PostSnippet from "@/components/PostSnippet";
 import { useQuery } from "@tanstack/react-query";
 import { getPosts } from "@/api/posts";
 import { primaryColor } from "@/constants/Colors";
+import { Text } from "@/components/Themed";
 
 export default function TabOneScreen() {
   const {
@@ -28,7 +29,13 @@ export default function TabOneScreen() {
     <ScrollView style={styles.container}>
       <PostTrigger />
 
-      {isPending ? <ActivityIndicator color={primaryColor} /> : null}
+      {isPending ? (
+        <ActivityIndicator style={styles.loader} color={primaryColor} />
+      ) : null}
+
+      {!posts?.length && !isPending ? (
+        <Text style={styles.emptyState}>No post to show</Text>
+      ) : null}
       <FlatList data={posts} renderItem={renderPost} />
     </ScrollView>
   );
@@ -41,5 +48,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: "bold",
+  },
+  loader: {
+    marginTop: 10,
+  },
+  emptyState: {
+    marginTop: 10,
+    textAlign: "center",
   },
 });
