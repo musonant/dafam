@@ -10,6 +10,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { Text, View } from "./Themed";
 import { primaryBlue, primaryColor, tintColorLight } from "@/constants/Colors";
 import { PostType } from "@/api/posts";
+import Toast from "react-native-toast-message";
 
 dayjs.extend(relativeTime);
 
@@ -60,7 +61,16 @@ export default function PostSnippet({ postData }: { postData: PostType }) {
             <Text style={styles.statsText}>{localLikesCount}</Text>
           ) : null}
         </TouchableOpacity>
-        <TouchableOpacity style={styles.actionBtn} activeOpacity={0.7}>
+        <TouchableOpacity
+          onPress={() => {
+            Toast.show({
+              text1: "Comment feature coming soon",
+              type: "info",
+            });
+          }}
+          style={styles.actionBtn}
+          activeOpacity={0.7}
+        >
           <Fontisto name="comment" size={20} color={primaryBlue} />
           {commentsCount ? (
             <Text style={styles.statsText}>{commentsCount}</Text>
