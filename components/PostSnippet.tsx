@@ -9,33 +9,35 @@ import relativeTime from "dayjs/plugin/relativeTime";
 
 import { Text, View } from "./Themed";
 import { primaryBlue, primaryColor, tintColorLight } from "@/constants/Colors";
+import { PostType } from "@/api/posts";
 
 dayjs.extend(relativeTime);
 
-export default function PostSnippet({ postData }) {
+export default function PostSnippet({ postData }: { postData: PostType }) {
   const {
     content = "",
-    userIcon,
     author,
-    date,
+    createdAt,
     likesCount,
     commentsCount,
-    userLikedPost = false,
   } = postData || {};
 
-  const [isLiked, setIsLiked] = useState(userLikedPost);
+  const [isLiked, setIsLiked] = useState(false);
+  const [localLikesCount, setLocalLikesCount] = useState(likesCount);
 
+  // @todo: persist like
   const toggleLikePost = () => {
     setIsLiked(!isLiked);
+    setLocalLikesCount(localLikesCount + 1);
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Image source={{ uri: userIcon }} style={styles.userIcon} />
+        <Image source={{ uri: author.photo }} style={styles.userIcon} />
         <View>
-          <Text style={styles.author}>{author}</Text>
-          <Text style={styles.date}>{dayjs(date).fromNow()}</Text>
+          <Text style={styles.author}>{author?.name}</Text>
+          <Text style={styles.date}>{dayjs(createdAt).fromNow()}</Text>
         </View>
       </View>
 
@@ -54,8 +56,8 @@ export default function PostSnippet({ postData }) {
           ) : (
             <AntDesign name="like2" size={23} color={primaryBlue} />
           )}
-          {likesCount ? (
-            <Text style={styles.statsText}>{likesCount}</Text>
+          {localLikesCount ? (
+            <Text style={styles.statsText}>{localLikesCount}</Text>
           ) : null}
         </TouchableOpacity>
         <TouchableOpacity style={styles.actionBtn} activeOpacity={0.7}>

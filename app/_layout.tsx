@@ -9,12 +9,15 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import Toast from "react-native-toast-message";
-import { store } from "@/store";
 import { Provider as ReduxProvider } from "react-redux";
-
-import { useColorScheme } from "@/components/useColorScheme";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistStore } from "redux-persist";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
+
+import { store } from "@/store";
+import { useColorScheme } from "@/components/useColorScheme";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -64,37 +67,38 @@ function RootLayoutNav() {
 
   return (
     <ReduxProvider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <ThemeProvider
-          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-        >
-          <Stack>
-            <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen
-              name="signup"
-              options={{
-                presentation: "modal",
-                headerBackTitle: "Cancel",
-                headerShadowVisible: false,
-                headerTitle: "",
-              }}
-            />
-            <Stack.Screen
-              name="login"
-              options={{
-                presentation: "modal",
-                headerBackTitle: "Cancel",
-                headerShadowVisible: false,
-                headerTitle: "",
-              }}
-            />
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            {/* <Stack.Screen name="modal" options={{ presentation: "modal" }} /> */}
-          </Stack>
+      <QueryClientProvider client={queryClient}>
+        <PersistGate loading={null} persistor={persistor}>
+          <ThemeProvider
+            value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+          >
+            <Stack>
+              <Stack.Screen name="index" options={{ headerShown: false }} />
+              <Stack.Screen
+                name="signup"
+                options={{
+                  presentation: "modal",
+                  headerBackTitle: "Cancel",
+                  headerShadowVisible: false,
+                  headerTitle: "",
+                }}
+              />
+              <Stack.Screen
+                name="login"
+                options={{
+                  presentation: "modal",
+                  headerBackTitle: "Cancel",
+                  headerShadowVisible: false,
+                  headerTitle: "",
+                }}
+              />
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            </Stack>
 
-          <Toast />
-        </ThemeProvider>
-      </PersistGate>
+            <Toast />
+          </ThemeProvider>
+        </PersistGate>
+      </QueryClientProvider>
     </ReduxProvider>
   );
 }

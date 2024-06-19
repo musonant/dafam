@@ -1,29 +1,24 @@
-import { FlatList, ScrollView, StyleSheet } from "react-native";
-import { Text, View } from "@/components/Themed";
-import { useEffect, useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  ActivityIndicator,
+  FlatList,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
 import PostTrigger from "@/components/PostTrigger";
 import PostSnippet from "@/components/PostSnippet";
+import { useQuery } from "@tanstack/react-query";
+import { getPosts } from "@/api/posts";
+import { primaryColor } from "@/constants/Colors";
 
 export default function TabOneScreen() {
-  const posts = [
-    {
-      content: "Meeee",
-      userIcon: "",
-      author: "James Arthur",
-      date: new Date().toISOString(),
-      likesCount: 20,
-      commentsCount: 10,
-    },
-    {
-      content: "Meowwww",
-      userIcon: "",
-      author: "Bill Clinton",
-      date: new Date().toISOString(),
-      likesCount: 0,
-      commentsCount: 10,
-    },
-  ];
+  const {
+    isPending,
+    error,
+    data: posts,
+  } = useQuery({
+    queryKey: ["posts"],
+    queryFn: getPosts,
+  });
 
   const renderPost = ({ item }) => {
     return <PostSnippet postData={item} />;
@@ -33,6 +28,7 @@ export default function TabOneScreen() {
     <ScrollView style={styles.container}>
       <PostTrigger />
 
+      {isPending ? <ActivityIndicator color={primaryColor} /> : null}
       <FlatList data={posts} renderItem={renderPost} />
     </ScrollView>
   );
