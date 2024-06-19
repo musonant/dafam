@@ -3,7 +3,6 @@ import {
   ScrollView,
   StatusBar,
   StyleSheet,
-  TouchableOpacity,
   View,
 } from "react-native";
 import { Link, router } from "expo-router";
@@ -18,11 +17,13 @@ import { yupSchemas } from "@/utils/validation";
 import { getInputPropsFromFormik } from "@/utils/common";
 import { createUser } from "@/firebaseConfig";
 import { useEffect, useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fonts } from "@/constants/typography";
 import { errorColor } from "@/constants/Colors";
+import { useDispatch } from "react-redux";
+import { createSession } from "@/store/authSlice";
 
 export default function Login() {
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -38,11 +39,11 @@ export default function Login() {
     password: "",
   };
 
-  async function performSignup(values) {
+  async function performSignup(values: typeof initialValues) {
     setIsLoading(true);
     try {
       const result = await createUser(values);
-      await AsyncStorage.setItem("userData", JSON.stringify(result));
+      dispatch(createSession(result));
       router.replace("/(tabs)/home");
     } catch (err) {
       setIsLoading(false);
@@ -63,7 +64,8 @@ export default function Login() {
   const formik = useFormik({
     initialValues,
     validationSchema: signinSchema,
-    onSubmit: ({ email, password }) => performSignup({ email, password }),
+    onSubmit: ({ email, password, displayName }) =>
+      performSignup({ email, password, displayName }),
   });
 
   const { handleSubmit, errors, touched, values } = formik;
@@ -90,7 +92,7 @@ export default function Login() {
 
         <View>
           <TextInput
-            placeholder="Username"
+            placeholder="Name"
             containerStyle={styles.input}
             {...inputProps.displayName}
             error={touched.displayName ? errors.displayName : ""}

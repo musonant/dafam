@@ -43,6 +43,7 @@ export default function Login() {
       dispatch(createSession(result));
       router.replace("/(tabs)/home");
     } catch (err) {
+      setIsLoading(false);
       if (err?.code === "auth/invalid-credential") {
         setError("Invalid credentials");
         return;
